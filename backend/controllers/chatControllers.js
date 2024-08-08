@@ -62,7 +62,7 @@ export const chatController = async (req, res) => {
 
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
-        const uploadPath = path.join('C:/chtwithpdf/backend', 'uploads');
+        const uploadPath = path.join('C:/Deskera/Talktopdf/backend', 'uploads');
         fs.mkdirSync(uploadPath, { recursive: true });
         cb(null, uploadPath);
     },
