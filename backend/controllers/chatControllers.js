@@ -1,6 +1,7 @@
 import dotenv from "dotenv";
 import multer from 'multer';
 import path from 'path';
+import fs from 'fs';
 import { PDFLoader } from '@langchain/community/document_loaders/fs/pdf'; // Adjust based on actual export
 import { RecursiveCharacterTextSplitter } from 'langchain/text_splitter';
 import { FaissStore } from "@langchain/community/vectorstores/faiss";
@@ -15,7 +16,7 @@ dotenv.config();
 export const chatController = async (req, res) => {
     try{
         console.log("hi");
-        const loader = new PDFLoader("C:/chtwithpdf/backend/uploads/example1.pdf");
+        const loader = new PDFLoader("C:/Deskera/Talktopdf/backend/uploads/example1.pdf");
         const docs = await loader.load();
 
         const splitter = new RecursiveCharacterTextSplitter({
@@ -41,16 +42,13 @@ export const chatController = async (req, res) => {
 
         // const question = 'what is the value of CTC';
         const question = req.body.question;
-        const answer = await chain.call({
+        const answer = await chain.invoke({
             query: question
         });
         console.log(answer);
         return res.status(200).json({
             result: answer.text,
         });
-        // return res.status(200).json({
-        //     result: answer,
-        // });
         
 
     } catch(err){
@@ -64,8 +62,9 @@ export const chatController = async (req, res) => {
 
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
-        // cb(null, '../uploads');
-        cb(null, path.join('C:/chtwithpdf/backend', 'uploads'));
+        const uploadPath = path.join('C:/chtwithpdf/backend', 'uploads');
+        fs.mkdirSync(uploadPath, { recursive: true });
+        cb(null, uploadPath);
     },
     filename: (req, file, cb) => {
         cb(null, `example1.pdf`);
